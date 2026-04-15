@@ -1,9 +1,29 @@
 const express = require("express");
-
 const router = express.Router();
+const Expense = require("../models/Expense");
 
-const { addExpense } = require("../controllers/expenseController");
+// ➕ Add Expense
+router.post("/", async (req, res) => {
+  try {
+    const { title, amount } = req.body;
 
-router.post("/add", addExpense);
+    const newExpense = new Expense({ title, amount });
+    await newExpense.save();
+
+    res.json({ message: "Expense added successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 📄 Get All Expenses
+router.get("/", async (req, res) => {
+  try {
+    const expenses = await Expense.find();
+    res.json(expenses);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

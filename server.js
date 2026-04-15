@@ -1,30 +1,21 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+const expenseRoutes = require("./routes/expenseRoutes");
 
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // Routes
-const expenseRoutes = require("./routes/expenseRoutes");
-console.log(expenseRoutes);
-app.use("/api/expenses", expenseRoutes);
+app.use("/expenses", expenseRoutes);
 
-// DB Connection
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err));
+// MongoDB connection (you already did Day 1)
+mongoose.connect("mongodb://127.0.0.1:27017/expense-tracker")
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("API Running");
+// Start server
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
-
-// Server Start
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-}); 
