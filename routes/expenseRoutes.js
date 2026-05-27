@@ -1,28 +1,67 @@
 const express = require("express");
 const router = express.Router();
+
 const Expense = require("../models/Expense");
+const authMiddleware = require("../middleware/authMiddleware");
 
-// ➕ Add Expense
-router.post("/", async (req, res) => {
+
+// GET all expenses
+router.get("/", authMiddleware, async (req, res) => {
   try {
-    const { title, amount } = req.body;
 
-    const newExpense = new Expense({ title, amount });
-    await newExpense.save();
+    const expenses = await Expense.find({
+      user: req.user,
+    });
 
-    res.json({ message: "Expense added successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log(expenses);
+
+    res.json(expenses);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Server Error");
   }
 });
 
-// 📄 Get All Expenses
-router.get("/", async (req, res) => {
+// ADD expense
+router.post("/", authMiddleware, async (req, res) => {
   try {
-    const expenses = await Expense.find();
-    res.json(expenses);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+
+    console.log(req.body);
+
+    const { title, amount, category } = req.body;
+
+    const newExpense = new Expense({
+      title,
+      amount,
+      category,
+      user: req.user,
+    });
+
+    const savedExpense = await newExpense.save();
+
+    res.json(savedExpense);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Server Error");
+  }
+});
+
+
+// DELETE expense
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+
+    await Expense.findByIdAndDelete(req.params.id);
+
+    res.json({
+      msg: "Expense deleted",
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Server Error");
   }
 });
 
