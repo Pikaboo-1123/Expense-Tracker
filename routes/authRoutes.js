@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
       id: user.id,
     },
   },
-  "mysecretkey"
+  process.env.JWT_SECRET
 );
 
 
