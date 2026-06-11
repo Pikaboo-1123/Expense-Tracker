@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A simple expense tracker built using [your tech stack].
+A simple expense tracker built using MERN full stack.
 
 ## Features
 - Add expenses
